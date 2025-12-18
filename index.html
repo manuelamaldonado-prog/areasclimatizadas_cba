@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Punto de Hidratación CBA</title>
+<title>Áreas Climatizadas CBA</title>
 
 <!-- Fuente -->
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
 <!-- Estilos -->
 <link rel="stylesheet" href="style.css">
 
-<!-- PWA sin service worker -->
+<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 </head>
 
@@ -21,9 +21,10 @@
      BLOQUE 1 — INFORMACIÓN GENERAL
 ============================================================== -->
 <div id="step1" class="step active">
-  <h1>Bloque 1 – Información general</h1>
+  <h1>Áreas Climatizadas CBA</h1>
+  <h2>Bloque 1 – Información general</h2>
 
-  <label>Nombre / Número del punto</label>
+  <label>Nombre / Número del área</label>
   <input id="nombre" class="input" />
 
   <label>Persona a cargo del relevamiento</label>
@@ -49,7 +50,6 @@
   <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
 </div>
 
-
 <!-- ============================================================
      BLOQUE 2 — CONFORT TÉRMICO
 ============================================================== -->
@@ -60,7 +60,6 @@
   <button onclick="prevStep()" class="back-btn">← Volver</button>
   <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
 </div>
-
 
 <!-- ============================================================
      BLOQUE 3 — DISPOSICIONES EDILICIAS
@@ -73,7 +72,6 @@
   <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
 </div>
 
-
 <!-- ============================================================
      BLOQUE 4 — ENVOLVENTE TÉRMICA
 ============================================================== -->
@@ -84,7 +82,6 @@
   <button onclick="prevStep()" class="back-btn">← Volver</button>
   <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
 </div>
-
 
 <!-- ============================================================
      BLOQUE 5 — PROTECCIONES PASIVAS
@@ -97,7 +94,6 @@
   <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
 </div>
 
-
 <!-- ============================================================
      BLOQUE 6 — DISEÑO
 ============================================================== -->
@@ -109,7 +105,6 @@
   <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
 </div>
 
-
 <!-- ============================================================
      BLOQUE 7 — SERVICIOS
 ============================================================== -->
@@ -118,20 +113,31 @@
   <div id="form7"></div>
 
   <button onclick="prevStep()" class="back-btn">← Volver</button>
-  <button onclick="calcular()" class="next-btn">Calcular resultado</button>
+  <button onclick="cargarResultados()" class="next-btn">
+    Cargar resultados
+  </button>
 </div>
-
 
 <!-- ============================================================
      RESULTADO FINAL
 ============================================================== -->
 <div id="step8" class="step">
-  <h1>Resultado</h1>
+  <h1>Resultado – Áreas Climatizadas CBA</h1>
 
   <div id="resultado"></div>
 
   <h3>Comentarios adicionales</h3>
-  <textarea id="comentarios" style="width:100%; height:120px;"></textarea>
+  <textarea id="comentarios" style="width:100%; height:120px;"
+    placeholder="Escriba aquí comentarios adicionales..."></textarea>
+
+  <button onclick="cargarComentarios()" class="next-btn" style="margin-top:10px;">
+    Cargar comentarios
+  </button>
+
+  <div id="comentariosCargados"
+       style="margin-top:15px; padding:10px; border:1px solid #ccc; border-radius:8px;">
+    <em>— Comentarios no cargados —</em>
+  </div>
 
   <h3>Fotografías (5 máximo)</h3>
   <div style="display:flex; flex-wrap:wrap; gap:10px;">
@@ -142,7 +148,8 @@
     <input type="file" accept="image/*" onchange="manejarImagen(this)">
   </div>
 
-  <div id="imagenesPreview" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
+  <div id="imagenesPreview"
+       style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
 
   <button onclick="descargarPDF()" class="next-btn">Descargar PDF</button>
   <button onclick="location.reload()" class="next-btn">Nueva evaluación</button>
