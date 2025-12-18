@@ -224,6 +224,9 @@ function cargarResultados() {
 
   // 2. Generar informe final
   calcular();
+
+  // 3. Avanzar al paso de resultados
+  nextStep();
 }
 /* ============================================================
    INFORME FINAL
