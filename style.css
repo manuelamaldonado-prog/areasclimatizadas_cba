@@ -1,0 +1,205 @@
+/* ============================================================
+   GENERAL
+============================================================ */
+
+body {
+  font-family: 'Public Sans', sans-serif;
+  background: #ffffff;
+  margin: 0;
+  padding: 0;
+  color: #222;
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+h3 {
+  margin-top: 25px;
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 4px;
+}
+
+h4 {
+  margin-top: 15px;
+  font-weight: 600;
+  color: #444;
+}
+
+/* ============================================================
+   STEPS
+============================================================ */
+
+.step {
+  display: none;
+  padding: 20px;
+}
+
+.step.active {
+  display: block;
+}
+
+/* ============================================================
+   INPUTS
+============================================================ */
+
+label {
+  font-size: 16px;
+  font-weight: 600;
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.capacidad {
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ============================================================
+   BOTONES DE NAVEGACIÓN
+============================================================ */
+
+.next-btn,
+.back-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.next-btn {
+  background: #4F9CF9;
+  color: white;
+}
+
+.back-btn {
+  background: #e4e4e4;
+  color: #333;
+}
+
+/* ============================================================
+   PREGUNTAS
+============================================================ */
+
+.pregunta {
+  margin-bottom: 25px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f7f7f7;
+}
+
+.pregunta strong {
+  font-size: 17px;
+}
+
+.explica {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}
+
+/* ============================================================
+   BOTONES SÍ / NO (PREGUNTAS)
+============================================================ */
+
+.opciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-resp {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: 2px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.btn-resp.seleccionado {
+  outline: 3px solid #000;
+}
+
+/* COLORES SEGÚN GRAVEDAD */
+.btn-si.seleccionado {
+  background: #2ecc71;
+  color: white;
+}
+
+.btn-no-muygrave.seleccionado {
+  background: #ff4d4d;
+  color: white;
+}
+
+.btn-no-grave.seleccionado {
+  background: #ff6961;
+  color: white;
+}
+
+.btn-no-medio.seleccionado {
+  background: #f5a623;
+  color: white;
+}
+
+.btn-no-leve.seleccionado {
+  background: #fbd55b;
+  color: #111;
+}
+
+/* ============================================================
+   BLOQUE 1 – SERVICIO MÉDICO (SOLO ESTÉTICO)
+============================================================ */
+
+.yesno-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.yesno {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* SI → VERDE */
+.yesno-container button:nth-child(1).seleccionado {
+  background: #2ecc71;
+  border-color: #2ecc71;
+  color: white;
+}
+
+/* NO → ROJO */
+.yesno-container button:nth-child(2).seleccionado {
+  background: #e74c3c;
+  border-color: #e74c3c;
+  color: white;
+}
