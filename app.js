@@ -1,5 +1,5 @@
 /* ============================================================
-   APP.JS — DEFINICIONES GENERALES
+   APP.JS — ÁREAS CLIMATIZADAS CBA
 =========================================================== */
 
 let respuestas = {};
@@ -59,7 +59,7 @@ const bloques = {
 };
 
 /* ============================================================
-   FORMULARIOS
+   GENERACIÓN DE FORMULARIOS
 =========================================================== */
 
 function generarFormularios() {
@@ -74,8 +74,10 @@ function generarFormularios() {
         <strong>${p.t}</strong>
         <p class="explica">${p.d}</p>
         <div class="opciones">
-          <button class="btn-resp btn-si" onclick="seleccionarRespuesta('${id}',${i},'si',this)">Sí</button>
-          <button class="btn-resp btn-no-${p.g}" onclick="seleccionarRespuesta('${id}',${i},'no',this)">No</button>
+          <button class="btn-resp btn-si"
+            onclick="seleccionarRespuesta('${id}', ${i}, 'si', this)">Sí</button>
+          <button class="btn-resp btn-no-${p.g}"
+            onclick="seleccionarRespuesta('${id}', ${i}, 'no', this)">No</button>
         </div>`;
       cont.appendChild(div);
     });
@@ -84,97 +86,131 @@ function generarFormularios() {
 generarFormularios();
 
 /* ============================================================
-   RESPUESTAS
+   RESPUESTAS Y DATOS GENERALES
 =========================================================== */
 
-function seleccionarRespuesta(b,i,v,bn){
-  respuestas[`${b}_${i}`]=v;
-  bn.parentElement.querySelectorAll(".btn-resp").forEach(x=>x.classList.remove("seleccionado"));
-  bn.classList.add("seleccionado");
+function seleccionarRespuesta(b, i, v, btn) {
+  respuestas[`${b}_${i}`] = v;
+  btn.parentElement.querySelectorAll(".btn-resp")
+    .forEach(x => x.classList.remove("seleccionado"));
+  btn.classList.add("seleccionado");
 }
 
-function setDatoGeneral(c,v,b){
-  datosGenerales[c]=v;
-  b.parentNode.querySelectorAll("button").forEach(x=>x.classList.remove("seleccionado"));
-  b.classList.add("seleccionado");
+function setDatoGeneral(campo, valor, btn) {
+  datosGenerales[campo] = valor;
+  btn.parentNode.querySelectorAll("button")
+    .forEach(b => b.classList.remove("seleccionado"));
+  btn.classList.add("seleccionado");
 }
 
 /* ============================================================
    NAVEGACIÓN
 =========================================================== */
 
-let pasoActual=1;
-function mostrarPaso(n){
-  document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
-  document.getElementById("step"+n).classList.add("active");
+let pasoActual = 1;
+
+function mostrarPaso(n) {
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+  document.getElementById("step" + n).classList.add("active");
 }
-function nextStep(){pasoActual++;mostrarPaso(pasoActual);}
-function prevStep(){pasoActual--;mostrarPaso(pasoActual);}
+
+function nextStep() { pasoActual++; mostrarPaso(pasoActual); }
+function prevStep() { pasoActual--; mostrarPaso(pasoActual); }
 
 /* ============================================================
    CAPACIDAD
 =========================================================== */
 
-document.getElementById("m2").addEventListener("input",()=>{
-  const m2=parseFloat(m2.value)||0;
-  capacidadTexto.innerHTML=`<strong>Personas permitidas:</strong> ${Math.floor(m2/3.5)}`;
+document.getElementById("m2").addEventListener("input", () => {
+  const m2 = parseFloat(document.getElementById("m2").value) || 0;
+  document.getElementById("capacidadTexto").innerHTML =
+    `<strong>Personas permitidas:</strong> ${Math.floor(m2 / 3.5)}`;
 });
 
 /* ============================================================
-   LÓGICAS
+   LÓGICAS DE GRAVEDAD
 =========================================================== */
 
-function obtenerGravedadFinal(b,i,v){
-  if(b==="form7"&&i===0) return v==="si"?"bueno":"muygrave";
-  if(b==="form5") return v==="si"?"bueno":"leve";
-  return v==="si"?"bueno":bloques[b][i].g;
+function obtenerGravedadFinal(b, i, v) {
+
+  /* Agua fría: condición necesaria y suficiente */
+  if (b === "form7" && i === 0)
+    return v === "si" ? "bueno" : "muygrave";
+
+  /* Protecciones pasivas */
+  if (b === "form5")
+    return v === "si" ? "bueno" : "leve";
+
+  return v === "si" ? "bueno" : bloques[b][i].g;
 }
 
 /* ============================================================
-   CLASIFICACIÓN
+   CLASIFICACIÓN GENERAL
 =========================================================== */
 
-function clasificarPunto(){
-  let muy=0,gra=0,med=0,lev=0,buenas=0;
-  Object.keys(respuestas).forEach(k=>{
-    const[g,i]=k.split("_");
-    const gr=obtenerGravedadFinal(g,+i,respuestas[k]);
-    if(gr==="bueno")buenas++;
-    if(gr==="muygrave")muy++;
-    if(gr==="grave")gra++;
-    if(gr==="medio")med++;
-    if(gr==="leve")lev++;
+function clasificarPunto() {
+  let muy = 0, gra = 0, med = 0, lev = 0, buenas = 0;
+
+  Object.keys(respuestas).forEach(k => {
+    const [b, i] = k.split("_");
+    const g = obtenerGravedadFinal(b, +i, respuestas[k]);
+    if (g === "bueno") buenas++;
+    if (g === "muygrave") muy++;
+    if (g === "grave") gra++;
+    if (g === "medio") med++;
+    if (g === "leve") lev++;
   });
-  if(respuestas["form7_0"]==="no"||buenas<4||muy>=1||gra>=4||med>=6||lev>=7)
-    return{estado:"rojo",muy,gra,med,lev,buenas};
-  if(gra>=2||med>=3||lev>=4)
-    return{estado:"amarillo",muy,gra,med,lev,buenas};
-  return{estado:"verde",muy,gra,med,lev,buenas};
+
+  if (
+    respuestas["form7_0"] === "no" ||
+    buenas < 4 ||
+    muy >= 1 ||
+    gra >= 4 ||
+    med >= 6 ||
+    lev >= 7
+  ) return { estado: "rojo", muy, gra, med, lev, buenas };
+
+  if (gra >= 2 || med >= 3 || lev >= 4)
+    return { estado: "amarillo", muy, gra, med, lev, buenas };
+
+  return { estado: "verde", muy, gra, med, lev, buenas };
+}
+
+/* ============================================================
+   COMENTARIOS (CARGA EXPLÍCITA)
+=========================================================== */
+
+function cargarComentarios() {
+  const txt = document.getElementById("comentarios").value.trim();
+  const cont = document.getElementById("comentariosCargados");
+  cont.innerHTML = txt ? txt.replace(/\n/g, "<br>") : "<em>— Sin comentarios —</em>";
 }
 
 /* ============================================================
    IMÁGENES
 =========================================================== */
 
-function manejarImagen(input){
-  const file=input.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
+function manejarImagen(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
     imagenesCargadas.push(e.target.result);
     mostrarImagenes();
   };
   reader.readAsDataURL(file);
 }
 
-function mostrarImagenes(){
-  const cont=document.getElementById("imagenesPreview");
-  cont.innerHTML="";
-  imagenesCargadas.forEach(src=>{
-    const img=document.createElement("img");
-    img.src=src;
-    img.style.maxWidth="150px";
-    img.style.margin="5px";
+function mostrarImagenes() {
+  const cont = document.getElementById("imagenesPreview");
+  if (!cont) return;
+  cont.innerHTML = "";
+  imagenesCargadas.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    img.style.maxWidth = "150px";
+    img.style.margin = "5px";
     cont.appendChild(img);
   });
 }
@@ -185,47 +221,32 @@ function mostrarImagenes(){
 
 function calcular() {
 
-  const clasif = clasificarPunto();
-  let { estado, muy, gra, med, lev, buenas } = clasif;
-
-  let m2 = parseFloat(document.getElementById("m2").value) || 0;
-  let capacidad = Math.floor(m2 / 3.5);
+  const { estado, muy, gra, med, lev, buenas } = clasificarPunto();
+  const m2 = parseFloat(document.getElementById("m2").value) || 0;
+  const capacidad = Math.floor(m2 / 3.5);
 
   let html = `
-  <h2>${
-    estado === "rojo" ? "🟥 Área NO apta como área climatizada" :
-    estado === "amarillo" ? "🟡 Área climatizada con mejoras necesarias" :
-    "🟢 Área climatizada apta"
-  }</h2>
+    <h2>${
+      estado === "rojo" ? "🟥 Área NO apta como área climatizada" :
+      estado === "amarillo" ? "🟡 Área climatizada con mejoras necesarias" :
+      "🟢 Área climatizada apta"
+    }</h2>
 
-  <p><strong>Área total:</strong> ${m2} m²</p>
-  <p><strong>Personas permitidas:</strong> ${capacidad}</p>
+    <p><strong>Área total:</strong> ${m2} m²</p>
+    <p><strong>Personas permitidas:</strong> ${capacidad}</p>
+    <hr>
 
-  <hr>
+    <h3>Resumen de clasificación</h3>
+    <ul>
+      <li><strong>Buenas (🟢):</strong> ${buenas}</li>
+      <li><strong>Leves (🟡):</strong> ${lev}</li>
+      <li><strong>Medias (🟠):</strong> ${med}</li>
+      <li><strong>Graves (🔴):</strong> ${gra}</li>
+      <li><strong>Muy graves (🚨):</strong> ${muy}</li>
+    </ul>
+    <hr>
 
-  <h3>Datos generales del relevamiento</h3>
-  <p><strong>Área:</strong> ${document.getElementById("nombre").value}</p>
-  <p><strong>Responsable:</strong> ${document.getElementById("persona").value}</p>
-  <p><strong>Días:</strong> ${document.getElementById("dias").value}</p>
-  <p><strong>Horarios:</strong> ${document.getElementById("horarios").value}</p>
-  <p><strong>Servicio médico (107):</strong>
-    ${datosGenerales.medico ? datosGenerales.medico.toUpperCase() : "NO DECLARADO"}
-  </p>
-
-  <hr>
-
-  <h3>Resumen de clasificación</h3>
-  <ul>
-    <li><strong>Buenas (🟢):</strong> ${buenas}</li>
-    <li><strong>Leves (🟡):</strong> ${lev}</li>
-    <li><strong>Medias (🟠):</strong> ${med}</li>
-    <li><strong>Graves (🔴):</strong> ${gra}</li>
-    <li><strong>Muy graves (🚨):</strong> ${muy}</li>
-  </ul>
-
-  <hr>
-
-  <h3>Detalle de respuestas por bloque</h3>
+    <h3>Detalle de respuestas por bloque</h3>
   `;
 
   const nombresBloques = {
@@ -239,91 +260,60 @@ function calcular() {
 
   Object.keys(bloques).forEach(b => {
     html += `<h4>${nombresBloques[b]}</h4>`;
-
-    bloques[b].forEach((pregunta, idx) => {
-      let key = `${b}_${idx}`;
-      let valor = respuestas[key];
-
-      if (!valor) {
-        html += `<p><strong>${pregunta.t}</strong><br>Sin respuesta</p>`;
-        return;
-      }
-
-      let gravedad = obtenerGravedadFinal(b, idx, valor);
-
-      let emoji =
-        gravedad === "muygrave" ? "🚨" :
-        gravedad === "grave"    ? "🔴" :
-        gravedad === "medio"    ? "🟠" :
-        gravedad === "leve"     ? "🟡" : "🟢";
+    bloques[b].forEach((p, i) => {
+      const v = respuestas[`${b}_${i}`];
+      const g = v ? obtenerGravedadFinal(b, i, v) : null;
+      const emoji = !g ? "" :
+        g === "muygrave" ? "🚨" :
+        g === "grave" ? "🔴" :
+        g === "medio" ? "🟠" :
+        g === "leve" ? "🟡" : "🟢";
 
       html += `
         <p>
-          <strong>${pregunta.t}</strong><br>
-          Respuesta: ${valor.toUpperCase()} — ${gravedad.toUpperCase()} ${emoji}<br>
-          <small>${pregunta.d}</small>
+          <strong>${p.t}</strong><br>
+          ${v ? `Respuesta: ${v.toUpperCase()} — ${g.toUpperCase()} ${emoji}` : "Sin respuesta"}
         </p>
       `;
     });
-
     html += `<hr>`;
   });
 
   html += `
     <h3>Comentarios adicionales</h3>
-    <div id="comentariosTexto"></div>
+    <div id="comentariosCargados">${document.getElementById("comentariosCargados").innerHTML}</div>
 
     <h3>Registro fotográfico</h3>
     <div id="imagenesPreview"></div>
   `;
 
   document.getElementById("resultado").innerHTML = html;
-
-  // Pasamos el texto del textarea al div imprimible
-  const txt = document.getElementById("comentarios").value || "— Sin comentarios —";
-  document.getElementById("comentariosTexto").innerHTML = txt.replace(/\n/g, "<br>");
-
-  // Mostramos imágenes ya cargadas
   mostrarImagenes();
-
   nextStep();
 }
+
 /* ============================================================
    PDF
 =========================================================== */
 
 function descargarPDF() {
-
   const contenido = document.getElementById("resultado").innerHTML;
 
-  const ventana = window.open("", "_blank");
-  ventana.document.write(`
+  const w = window.open("", "_blank");
+  w.document.write(`
     <html>
     <head>
       <title>Áreas Climatizadas CBA</title>
-
       <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-
       <style>
-        body {
-          font-family: 'Public Sans', sans-serif;
-          padding: 20px;
-          color: #222;
-          line-height: 1.5;
-        }
-        h3 {
-          border-bottom: 2px solid #ddd;
-        }
-        img {
-          max-width: 100%;
-          margin-bottom: 10px;
-        }
+        body { font-family: 'Public Sans', sans-serif; padding: 20px; }
+        img { max-width: 100%; margin-bottom: 10px; }
       </style>
     </head>
     <body>${contenido}</body>
     </html>
   `);
-
-  ventana.document.close();
-  ventana.print();
+  w.document.close();
+  w.print();
 }
+
