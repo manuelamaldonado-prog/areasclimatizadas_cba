@@ -183,38 +183,147 @@ function mostrarImagenes(){
    INFORME FINAL
 =========================================================== */
 
-function calcular(){
+function calcular() {
 
-  const {estado,muy,gra,med,lev,buenas}=clasificarPunto();
-  const m2=parseFloat(document.getElementById("m2").value)||0;
-  const capacidad=Math.floor(m2/3.5);
+  const clasif = clasificarPunto();
+  let { estado, muy, gra, med, lev, buenas } = clasif;
 
-  let html=`
-  <h2>${estado==="rojo"?"🟥 Área NO apta como área climatizada":estado==="amarillo"?"🟡 Área climatizada con mejoras necesarias":"🟢 Área climatizada apta"}</h2>
+  let m2 = parseFloat(document.getElementById("m2").value) || 0;
+  let capacidad = Math.floor(m2 / 3.5);
+
+  let html = `
+  <h2>${
+    estado === "rojo" ? "🟥 Área NO apta como área climatizada" :
+    estado === "amarillo" ? "🟡 Área climatizada con mejoras necesarias" :
+    "🟢 Área climatizada apta"
+  }</h2>
+
   <p><strong>Área total:</strong> ${m2} m²</p>
-  <p><strong>Personas permitidas:</strong> ${capacidad}</p><hr>
-  <h3>Comentarios adicionales</h3>
-  <div>${document.getElementById("comentarios")?.value||"—"}</div>
-  <h3>Registro fotográfico</h3>
-  <div id="imagenesPreview"></div>`;
+  <p><strong>Personas permitidas:</strong> ${capacidad}</p>
 
-  document.getElementById("resultado").innerHTML=html;
+  <hr>
+
+  <h3>Datos generales del relevamiento</h3>
+  <p><strong>Área:</strong> ${document.getElementById("nombre").value}</p>
+  <p><strong>Responsable:</strong> ${document.getElementById("persona").value}</p>
+  <p><strong>Días:</strong> ${document.getElementById("dias").value}</p>
+  <p><strong>Horarios:</strong> ${document.getElementById("horarios").value}</p>
+  <p><strong>Servicio médico (107):</strong>
+    ${datosGenerales.medico ? datosGenerales.medico.toUpperCase() : "NO DECLARADO"}
+  </p>
+
+  <hr>
+
+  <h3>Resumen de clasificación</h3>
+  <ul>
+    <li><strong>Buenas (🟢):</strong> ${buenas}</li>
+    <li><strong>Leves (🟡):</strong> ${lev}</li>
+    <li><strong>Medias (🟠):</strong> ${med}</li>
+    <li><strong>Graves (🔴):</strong> ${gra}</li>
+    <li><strong>Muy graves (🚨):</strong> ${muy}</li>
+  </ul>
+
+  <hr>
+
+  <h3>Detalle de respuestas por bloque</h3>
+  `;
+
+  const nombresBloques = {
+    form2: "Bloque 2 – Confort térmico",
+    form3: "Bloque 3 – Disposiciones edilicias",
+    form4: "Bloque 4 – Envolvente térmica",
+    form5: "Bloque 5 – Protecciones pasivas",
+    form6: "Bloque 6 – Diseño",
+    form7: "Bloque 7 – Funciones y provisionamiento"
+  };
+
+  Object.keys(bloques).forEach(b => {
+    html += `<h4>${nombresBloques[b]}</h4>`;
+
+    bloques[b].forEach((pregunta, idx) => {
+      let key = `${b}_${idx}`;
+      let valor = respuestas[key];
+
+      if (!valor) {
+        html += `<p><strong>${pregunta.t}</strong><br>Sin respuesta</p>`;
+        return;
+      }
+
+      let gravedad = obtenerGravedadFinal(b, idx, valor);
+
+      let emoji =
+        gravedad === "muygrave" ? "🚨" :
+        gravedad === "grave"    ? "🔴" :
+        gravedad === "medio"    ? "🟠" :
+        gravedad === "leve"     ? "🟡" : "🟢";
+
+      html += `
+        <p>
+          <strong>${pregunta.t}</strong><br>
+          Respuesta: ${valor.toUpperCase()} — ${gravedad.toUpperCase()} ${emoji}<br>
+          <small>${pregunta.d}</small>
+        </p>
+      `;
+    });
+
+    html += `<hr>`;
+  });
+
+  html += `
+    <h3>Comentarios adicionales</h3>
+    <div id="comentariosTexto"></div>
+
+    <h3>Registro fotográfico</h3>
+    <div id="imagenesPreview"></div>
+  `;
+
+  document.getElementById("resultado").innerHTML = html;
+
+  // Pasamos el texto del textarea al div imprimible
+  const txt = document.getElementById("comentarios").value || "— Sin comentarios —";
+  document.getElementById("comentariosTexto").innerHTML = txt.replace(/\n/g, "<br>");
+
+  // Mostramos imágenes ya cargadas
   mostrarImagenes();
+
   nextStep();
 }
-
 /* ============================================================
    PDF
 =========================================================== */
 
-function descargarPDF(){
-  const cont=document.getElementById("resultado").innerHTML;
-  const w=window.open("","_blank");
-  w.document.write(`
-  <html><head>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>body{font-family:'Public Sans',sans-serif;padding:20px}</style>
-  </head><body>${cont}</body></html>`);
-  w.document.close();
-  w.print();
+function descargarPDF() {
+
+  const contenido = document.getElementById("resultado").innerHTML;
+
+  const ventana = window.open("", "_blank");
+  ventana.document.write(`
+    <html>
+    <head>
+      <title>Áreas Climatizadas CBA</title>
+
+      <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+      <style>
+        body {
+          font-family: 'Public Sans', sans-serif;
+          padding: 20px;
+          color: #222;
+          line-height: 1.5;
+        }
+        h3 {
+          border-bottom: 2px solid #ddd;
+        }
+        img {
+          max-width: 100%;
+          margin-bottom: 10px;
+        }
+      </style>
+    </head>
+    <body>${contenido}</body>
+    </html>
+  `);
+
+  ventana.document.close();
+  ventana.print();
 }
