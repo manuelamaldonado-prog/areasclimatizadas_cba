@@ -104,7 +104,7 @@ const bloques = {
   /* BLOQUE 7 – SERVICIOS */
   form7: [
     {
-      t: "¿El punto cuenta con disponibilidad de agua fría?",
+      t: "¿El punto cuenta con disponibilidad de agua fría para el público en general?",
       d: "Agua fría proveniente de heladera, dispenser o botellón refrigerado.",
       g: "muygrave"
     },
