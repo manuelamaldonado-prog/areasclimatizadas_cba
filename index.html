@@ -1,161 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Áreas Climatizadas CBA</title>
 
-<!-- Fuente -->
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<!-- Estilos -->
 <link rel="stylesheet" href="style.css">
-
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
 </head>
 
 <body>
 
-<!-- ============================================================
-     BLOQUE 1 — INFORMACIÓN GENERAL
-============================================================== -->
 <div id="step1" class="step active">
-  <h1>Áreas Climatizadas CBA</h1>
-  <h2>Bloque 1 – Información general</h2>
-
-  <label>Nombre / Número del área</label>
-  <input id="nombre" class="input" />
-
-  <label>Persona a cargo del relevamiento</label>
-  <input id="persona" class="input" />
-
-  <label>Días</label>
-  <input id="dias" class="input" />
-
-  <label>Horarios</label>
-  <input id="horarios" class="input" />
-
-  <label>Metros cuadrados disponibles</label>
-  <input id="m2" type="number" class="input" />
-
-  <p id="capacidadTexto" class="capacidad"></p>
-
-  <label>Disponibilidad de servicio médico (107)</label>
-  <div class="yesno-container">
-    <button onclick="setDatoGeneral('medico', 'si', this)" class="yesno">Sí</button>
-    <button onclick="setDatoGeneral('medico', 'no', this)" class="yesno">No</button>
-  </div>
-
-  <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
+<h1>Bloque 1 – Información general</h1>
+<input id="nombre" class="input" placeholder="Nombre del área">
+<input id="persona" class="input" placeholder="Responsable">
+<input id="dias" class="input" placeholder="Días">
+<input id="horarios" class="input" placeholder="Horarios">
+<input id="m2" type="number" class="input" placeholder="m²">
+<p id="capacidadTexto"></p>
+<button onclick="nextStep()" class="next-btn">Siguiente</button>
 </div>
 
-<!-- ============================================================
-     BLOQUE 2 — CONFORT TÉRMICO
-============================================================== -->
-<div id="step2" class="step">
-  <h1>Bloque 2 – Confort térmico</h1>
-  <div id="form2"></div>
+<div id="step2" class="step"><div id="form2"></div><button onclick="prevStep()">Volver</button><button onclick="nextStep()">Siguiente</button></div>
+<div id="step3" class="step"><div id="form3"></div><button onclick="prevStep()">Volver</button><button onclick="nextStep()">Siguiente</button></div>
+<div id="step4" class="step"><div id="form4"></div><button onclick="prevStep()">Volver</button><button onclick="nextStep()">Siguiente</button></div>
+<div id="step5" class="step"><div id="form5"></div><button onclick="prevStep()">Volver</button><button onclick="nextStep()">Siguiente</button></div>
+<div id="step6" class="step"><div id="form6"></div><button onclick="prevStep()">Volver</button><button onclick="nextStep()">Siguiente</button></div>
 
-  <button onclick="prevStep()" class="back-btn">← Volver</button>
-  <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
-</div>
-
-<!-- ============================================================
-     BLOQUE 3 — DISPOSICIONES EDILICIAS
-============================================================== -->
-<div id="step3" class="step">
-  <h1>Bloque 3 – Disposiciones edilicias</h1>
-  <div id="form3"></div>
-
-  <button onclick="prevStep()" class="back-btn">← Volver</button>
-  <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
-</div>
-
-<!-- ============================================================
-     BLOQUE 4 — ENVOLVENTE TÉRMICA
-============================================================== -->
-<div id="step4" class="step">
-  <h1>Bloque 4 – Envolvente térmica</h1>
-  <div id="form4"></div>
-
-  <button onclick="prevStep()" class="back-btn">← Volver</button>
-  <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
-</div>
-
-<!-- ============================================================
-     BLOQUE 5 — PROTECCIONES PASIVAS
-============================================================== -->
-<div id="step5" class="step">
-  <h1>Bloque 5 – Protecciones pasivas</h1>
-  <div id="form5"></div>
-
-  <button onclick="prevStep()" class="back-btn">← Volver</button>
-  <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
-</div>
-
-<!-- ============================================================
-     BLOQUE 6 — DISEÑO
-============================================================== -->
-<div id="step6" class="step">
-  <h1>Bloque 6 – Diseño</h1>
-  <div id="form6"></div>
-
-  <button onclick="prevStep()" class="back-btn">← Volver</button>
-  <button onclick="nextStep()" class="next-btn">Siguiente ➜</button>
-</div>
-
-<!-- ============================================================
-     BLOQUE 7 — SERVICIOS
-============================================================== -->
 <div id="step7" class="step">
-  <h1>Bloque 7 – Funciones y provisionamiento</h1>
-  <div id="form7"></div>
-
-  <button onclick="prevStep()" class="back-btn">← Volver</button>
-  <button onclick="cargarResultados()" class="next-btn">
-    Cargar resultados
-  </button>
+<div id="form7"></div>
+<button onclick="prevStep()">Volver</button>
+<button onclick="cargarResultados()">Cargar resultados</button>
 </div>
 
-<!-- ============================================================
-     RESULTADO FINAL
-============================================================== -->
 <div id="step8" class="step">
-  <h1>Resultado – Áreas Climatizadas CBA</h1>
-
-  <div id="resultado"></div>
-
-  <h3>Comentarios adicionales</h3>
-  <textarea id="comentarios" style="width:100%; height:120px;"
-    placeholder="Escriba aquí comentarios adicionales..."></textarea>
-
-  <button onclick="cargarComentarios()" class="next-btn" style="margin-top:10px;">
-    Cargar comentarios
-  </button>
-
-  <div id="comentariosCargados"
-       style="margin-top:15px; padding:10px; border:1px solid #ccc; border-radius:8px;">
-    <em>— Comentarios no cargados —</em>
-  </div>
-
-  <h3>Fotografías (5 máximo)</h3>
-  <div style="display:flex; flex-wrap:wrap; gap:10px;">
-    <input type="file" accept="image/*" onchange="manejarImagen(this)">
-    <input type="file" accept="image/*" onchange="manejarImagen(this)">
-    <input type="file" accept="image/*" onchange="manejarImagen(this)">
-    <input type="file" accept="image/*" onchange="manejarImagen(this)">
-    <input type="file" accept="image/*" onchange="manejarImagen(this)">
-  </div>
-
-  <div id="imagenesPreview"
-       style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
-
-  <button onclick="descargarPDF()" class="next-btn">Descargar PDF</button>
-  <button onclick="location.reload()" class="next-btn">Nueva evaluación</button>
+<h1>Resultado</h1>
+<div id="resultado"></div>
+<button onclick="descargarPDF()">Descargar PDF</button>
 </div>
 
 <script src="app.js"></script>
 </body>
 </html>
+
 
