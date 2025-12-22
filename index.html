@@ -47,78 +47,65 @@
 </div>
 
 <!-- ============================================================
-     BLOQUE 2 — CONFORT TÉRMICO
+     BLOQUES 2 A 7 — FORMULARIOS
 ============================================================== -->
 <div id="step2" class="step">
   <h1>Bloque 2 – Confort térmico</h1>
   <div id="form2"></div>
-
   <button class="back-btn" onclick="prevStep()">← Volver</button>
   <button class="next-btn" onclick="nextStep()">Siguiente ➜</button>
 </div>
 
-<!-- ============================================================
-     BLOQUE 3 — DISPOSICIONES EDILICIAS
-============================================================== -->
 <div id="step3" class="step">
   <h1>Bloque 3 – Disposiciones edilicias</h1>
   <div id="form3"></div>
-
   <button class="back-btn" onclick="prevStep()">← Volver</button>
   <button class="next-btn" onclick="nextStep()">Siguiente ➜</button>
 </div>
 
-<!-- ============================================================
-     BLOQUE 4 — ENVOLVENTE TÉRMICA
-============================================================== -->
 <div id="step4" class="step">
   <h1>Bloque 4 – Envolvente térmica</h1>
   <div id="form4"></div>
-
   <button class="back-btn" onclick="prevStep()">← Volver</button>
   <button class="next-btn" onclick="nextStep()">Siguiente ➜</button>
 </div>
 
-<!-- ============================================================
-     BLOQUE 5 — PROTECCIONES PASIVAS
-============================================================== -->
 <div id="step5" class="step">
   <h1>Bloque 5 – Protecciones pasivas</h1>
   <div id="form5"></div>
-
   <button class="back-btn" onclick="prevStep()">← Volver</button>
   <button class="next-btn" onclick="nextStep()">Siguiente ➜</button>
 </div>
 
-<!-- ============================================================
-     BLOQUE 6 — DISEÑO
-============================================================== -->
 <div id="step6" class="step">
   <h1>Bloque 6 – Diseño</h1>
   <div id="form6"></div>
-
   <button class="back-btn" onclick="prevStep()">← Volver</button>
   <button class="next-btn" onclick="nextStep()">Siguiente ➜</button>
 </div>
 
-<!-- ============================================================
-     BLOQUE 7 — SERVICIOS
-============================================================== -->
 <div id="step7" class="step">
   <h1>Bloque 7 – Servicios</h1>
   <div id="form7"></div>
-
   <button class="back-btn" onclick="prevStep()">← Volver</button>
   <button class="next-btn" onclick="calcular()">Calcular resultado</button>
 </div>
 
 <!-- ============================================================
-     RESULTADO FINAL
+     RESULTADO FINAL + FOTOS + OBSERVACIONES
 ============================================================== -->
 <div id="step8" class="step">
   <h1>Resultado</h1>
 
   <div id="resultado"></div>
+
+  <h3>Observaciones del relevador</h3>
+  <textarea id="comentariosGlobales" class="input" style="min-height:120px;"></textarea>
+
+  <h3>Registro fotográfico</h3>
+  <input type="file" id="fotos" accept="image/*" multiple class="input">
+
+  <div id="previewFotos"></div>
 
   <button class="next-btn" onclick="descargarPDF()">Descargar PDF</button>
   <button class="next-btn" onclick="location.reload()">Nueva evaluación</button>
@@ -128,6 +115,28 @@
      SCRIPT
 ============================================================== -->
 <script src="app.js"></script>
+
+<script>
+/* ============================================================
+   PREVISUALIZACIÓN DE FOTOS
+=========================================================== */
+document.getElementById("fotos").addEventListener("change", function () {
+  const preview = document.getElementById("previewFotos");
+  preview.innerHTML = "";
+
+  Array.from(this.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.style.maxWidth = "100%";
+      img.style.marginBottom = "10px";
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+});
+</script>
 
 </body>
 </html>
