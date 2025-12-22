@@ -1,12 +1,12 @@
 /* ============================================================
-   ESTADO
+   ESTADO GLOBAL
 =========================================================== */
 
 let respuestas = {};
 let datosGenerales = { medico: null };
 
 /* ============================================================
-   BLOQUES
+   BLOQUES Y PREGUNTAS (ORIGINAL)
 =========================================================== */
 
 const bloques = {
@@ -42,21 +42,21 @@ const bloques = {
 };
 
 /* ============================================================
-   MAPA DE MEJORAS
+   MAPA DE MEJORAS ASOCIADAS A PREGUNTAS
 =========================================================== */
 
 const mapaMejoras = {
-  "form2_1": ["Agregar ventilación cruzada o extractores."],
-  "form2_2": ["Instalar o reparar aire acondicionado."],
-  "form2_3": ["Instalar o reparar ventiladores."],
-  "form3_2": ["Adaptar accesos para movilidad reducida."],
-  "form4_0": ["Incorporar aislación térmica en cubierta."],
-  "form5_0": ["Agregar toldos o elementos de sombra."],
-  "form7_0": ["Incorporar dispenser de agua fría."]
+  "form2_1": { tipo: "MS", texto: "Agregar ventilación cruzada o extractores." },
+  "form2_2": { tipo: "MR", texto: "Instalar o reparar aire acondicionado." },
+  "form2_3": { tipo: "MR", texto: "Instalar o reparar ventiladores." },
+  "form3_2": { tipo: "MR", texto: "Adaptar accesos para movilidad reducida." },
+  "form4_0": { tipo: "MS", texto: "Incorporar aislación térmica en cubierta." },
+  "form5_0": { tipo: "MR", texto: "Agregar toldos o elementos de sombra." },
+  "form7_0": { tipo: "MR", texto: "Incorporar dispenser de agua fría." }
 };
 
 /* ============================================================
-   FORMULARIOS
+   GENERACIÓN DE FORMULARIOS (SIN CAMBIOS)
 =========================================================== */
 
 function generarFormularios() {
@@ -85,39 +85,60 @@ function responder(b, i, v, btn) {
 }
 
 /* ============================================================
-   PERSONAS / m2 — TIEMPO REAL (FIX DEFINITIVO)
+   PERSONAS / m² — FIX DEFINITIVO (VISIBLE EN BLOQUE 1)
 =========================================================== */
 
 function actualizarCapacidad() {
-  const m2 = parseFloat(document.getElementById("m2").value) || 0;
-  document.getElementById("capacidadTexto").innerHTML =
-    `<strong>Personas permitidas:</strong> ${Math.floor(m2 / 3.5)}`;
+  const m2 = parseFloat(document.getElementById("m2").value);
+  const txt = document.getElementById("capacidadTexto");
+
+  if (isNaN(m2) || m2 <= 0) {
+    txt.innerHTML = "";
+    return;
+  }
+
+  const personas = Math.floor(m2 / 3.5);
+  txt.innerHTML = `<strong>Capacidad máxima estimada:</strong> ${personas} personas`;
 }
 
 /* ============================================================
-   RESULTADO COMPLETO (RESPUESTAS + MEJORAS)
+   CÁLCULO FINAL — INFORME COMPLETO
 =========================================================== */
 
 function calcular() {
-  const m2 = parseFloat(document.getElementById("m2").value) || 0;
-  let html = `<p><strong>Superficie:</strong> ${m2} m²</p>`;
 
-  Object.entries(bloques).forEach(([id, preguntas], idxBloque) => {
-    html += `<h3>Bloque ${idxBloque + 2}</h3><ul>`;
+  const m2 = parseFloat(document.getElementById("m2").value) || 0;
+  const personas = Math.floor(m2 / 3.5);
+
+  let html = `
+    <p><strong>Superficie evaluada:</strong> ${m2} m²</p>
+    <p><strong>Capacidad máxima estimada:</strong> ${personas} personas</p>
+  `;
+
+  Object.entries(bloques).forEach(([id, preguntas], idx) => {
+    html += `<h3>Bloque ${idx + 2}</h3><ul>`;
+
     preguntas.forEach((p, i) => {
-      const r = respuestas[`${id}_${i}`] || "—";
-      html += `<li>${p.t} → <strong>${r.toUpperCase()}</strong>`;
-      if (r === "no" && mapaMejoras[`${id}_${i}`]) {
-        html += `<ul><li><em>${mapaMejoras[`${id}_${i}`][0]}</em></li></ul>`;
+      const r = respuestas[`${id}_${i}`] || "No respondido";
+      html += `<li>
+        ${p.t}<br>
+        <strong>Respuesta:</strong> ${r.toUpperCase()}
+      `;
+
+      const clave = `${id}_${i}`;
+      if (r === "no" && mapaMejoras[clave]) {
+        html += `<br><em>Mejora asociada (${mapaMejoras[clave].tipo}):</em> ${mapaMejoras[clave].texto}`;
       }
+
       html += `</li>`;
     });
+
     html += `</ul>`;
   });
 
   html += `
-    <h3>Observaciones</h3>
-    <textarea id="comentarios" style="width:100%;min-height:100px;"></textarea>
+    <h3>Observaciones del relevador</h3>
+    <textarea id="comentarios" style="width:100%;min-height:120px;"></textarea>
   `;
 
   document.getElementById("resultado").innerHTML = html;
@@ -125,17 +146,19 @@ function calcular() {
 }
 
 /* ============================================================
-   PDF (OBSERVACIONES INCLUIDAS)
+   PDF — OBSERVACIONES + INFORME COMPLETO
 =========================================================== */
 
 function descargarPDF() {
   const res = document.getElementById("resultado").cloneNode(true);
-  const t = res.querySelector("textarea");
+  const t = res.querySelector("#comentarios");
+
   if (t) {
     const p = document.createElement("p");
     p.innerHTML = t.value || "Sin observaciones.";
     t.replaceWith(p);
   }
+
   const w = window.open("");
   w.document.write(`<html><body>${res.innerHTML}</body></html>`);
   w.document.close();
