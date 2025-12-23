@@ -99,6 +99,20 @@ function actualizarCapacidad() {
 
   txt.innerHTML = `<strong>Capacidad máxima estimada:</strong> ${Math.floor(m2 / 3.5)} personas`;
 }
+/* ============================================================
+   DATOS GENERALES — SERVICIO MÉDICO
+=========================================================== */
+
+function setDatoGeneral(campo, valor, boton) {
+  datosGenerales[campo] = valor;
+
+  boton.parentElement
+    .querySelectorAll("button")
+    .forEach(b => b.classList.remove("seleccionado"));
+
+  boton.classList.add("seleccionado");
+}
+
 
 /* ============================================================
    NAVEGACIÓN ENTRE PASOS
