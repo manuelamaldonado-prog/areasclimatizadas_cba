@@ -6,7 +6,7 @@ let respuestas = {};
 let datosGenerales = { medico: null };
 
 /* ============================================================
-   BLOQUES Y PREGUNTAS (ORIGINAL)
+   BLOQUES Y PREGUNTAS
 =========================================================== */
 
 const bloques = {
@@ -42,7 +42,7 @@ const bloques = {
 };
 
 /* ============================================================
-   MAPA DE MEJORAS ASOCIADAS A PREGUNTAS
+   MAPA DE MEJORAS
 =========================================================== */
 
 const mapaMejoras = {
@@ -56,7 +56,7 @@ const mapaMejoras = {
 };
 
 /* ============================================================
-   GENERACIÓN DE FORMULARIOS (SIN CAMBIOS)
+   GENERACIÓN DE FORMULARIOS
 =========================================================== */
 
 function generarFormularios() {
@@ -85,7 +85,7 @@ function responder(b, i, v, btn) {
 }
 
 /* ============================================================
-   PERSONAS / m² — FIX DEFINITIVO (VISIBLE EN BLOQUE 1)
+   PERSONAS / m²
 =========================================================== */
 
 function actualizarCapacidad() {
@@ -97,12 +97,35 @@ function actualizarCapacidad() {
     return;
   }
 
-  const personas = Math.floor(m2 / 3.5);
-  txt.innerHTML = `<strong>Capacidad máxima estimada:</strong> ${personas} personas`;
+  txt.innerHTML = `<strong>Capacidad máxima estimada:</strong> ${Math.floor(m2 / 3.5)} personas`;
 }
 
 /* ============================================================
-   CÁLCULO FINAL — INFORME COMPLETO
+   NAVEGACIÓN ENTRE PASOS
+=========================================================== */
+
+let pasoActual = 1;
+const TOTAL_PASOS = 8;
+
+function mostrarPaso(n) {
+  if (n < 1) n = 1;
+  if (n > TOTAL_PASOS) n = TOTAL_PASOS;
+
+  pasoActual = n;
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+  document.getElementById("step" + pasoActual).classList.add("active");
+}
+
+function nextStep() {
+  mostrarPaso(pasoActual + 1);
+}
+
+function prevStep() {
+  mostrarPaso(pasoActual - 1);
+}
+
+/* ============================================================
+   CÁLCULO FINAL
 =========================================================== */
 
 function calcular() {
@@ -117,22 +140,15 @@ function calcular() {
 
   Object.entries(bloques).forEach(([id, preguntas], idx) => {
     html += `<h3>Bloque ${idx + 2}</h3><ul>`;
-
     preguntas.forEach((p, i) => {
       const r = respuestas[`${id}_${i}`] || "No respondido";
-      html += `<li>
-        ${p.t}<br>
-        <strong>Respuesta:</strong> ${r.toUpperCase()}
-      `;
-
-      const clave = `${id}_${i}`;
-      if (r === "no" && mapaMejoras[clave]) {
-        html += `<br><em>Mejora asociada (${mapaMejoras[clave].tipo}):</em> ${mapaMejoras[clave].texto}`;
+      html += `<li>${p.t}<br><strong>Respuesta:</strong> ${r.toUpperCase()}`;
+      const k = `${id}_${i}`;
+      if (r === "no" && mapaMejoras[k]) {
+        html += `<br><em>Mejora (${mapaMejoras[k].tipo}):</em> ${mapaMejoras[k].texto}`;
       }
-
       html += `</li>`;
     });
-
     html += `</ul>`;
   });
 
@@ -142,23 +158,21 @@ function calcular() {
   `;
 
   document.getElementById("resultado").innerHTML = html;
-  nextStep();
+  mostrarPaso(8);
 }
 
 /* ============================================================
-   PDF — OBSERVACIONES + INFORME COMPLETO
+   PDF
 =========================================================== */
 
 function descargarPDF() {
   const res = document.getElementById("resultado").cloneNode(true);
   const t = res.querySelector("#comentarios");
-
   if (t) {
     const p = document.createElement("p");
     p.innerHTML = t.value || "Sin observaciones.";
     t.replaceWith(p);
   }
-
   const w = window.open("");
   w.document.write(`<html><body>${res.innerHTML}</body></html>`);
   w.document.close();
