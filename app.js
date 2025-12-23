@@ -152,17 +152,37 @@ function calcular() {
     <p><strong>Capacidad máxima estimada:</strong> ${personas} personas</p>
   `;
 
+  // Mapa gravedad → emoji
+  const emojiGravedad = {
+    leve: "🟡",
+    medio: "🟠",
+    grave: "🔴",
+    muygrave: "🟥"
+  };
+
   Object.entries(bloques).forEach(([id, preguntas], idx) => {
     html += `<h3>Bloque ${idx + 2}</h3><ul>`;
+
     preguntas.forEach((p, i) => {
       const r = respuestas[`${id}_${i}`] || "No respondido";
-      html += `<li>${p.t}<br><strong>Respuesta:</strong> ${r.toUpperCase()}`;
-      const k = `${id}_${i}`;
-      if (r === "no" && mapaMejoras[k]) {
-        html += `<br><em>Mejora (${mapaMejoras[k].tipo}):</em> ${mapaMejoras[k].texto}`;
+      const gravedad = p.g;
+      const emoji = emojiGravedad[gravedad] || "";
+
+      html += `
+        <li>
+          ${emoji} <strong>${p.t}</strong><br>
+          <strong>Respuesta:</strong> ${r.toUpperCase()}<br>
+          <strong>Gravedad:</strong> ${gravedad}
+      `;
+
+      const clave = `${id}_${i}`;
+      if (r === "no" && mapaMejoras[clave]) {
+        html += `<br><em>Mejora asociada (${mapaMejoras[clave].tipo}):</em> ${mapaMejoras[clave].texto}`;
       }
+
       html += `</li>`;
     });
+
     html += `</ul>`;
   });
 
@@ -174,6 +194,7 @@ function calcular() {
   document.getElementById("resultado").innerHTML = html;
   mostrarPaso(8);
 }
+
 
 /* ============================================================
    PDF
